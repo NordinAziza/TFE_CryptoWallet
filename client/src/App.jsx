@@ -1,8 +1,9 @@
 import "./App.css";
 import Trade from './components/Trade'
+import Register from './components/Register'
 function App() {
   return (
-    <Trade></Trade>
+    <Register></Register>
   );
 }
 
