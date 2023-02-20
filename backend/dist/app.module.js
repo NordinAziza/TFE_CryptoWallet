@@ -14,6 +14,7 @@ const auth_module_1 = require("./auth/auth.module");
 const user_module_1 = require("./user/user.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./user/entity/user.entity");
+const profile_module_1 = require("./profile/profile.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -25,11 +26,12 @@ AppModule = __decorate([
                 host: 'localhost',
                 port: 3306,
                 username: 'root',
-                password: 'nordin',
+                password: 'root',
                 database: 'wallet',
                 entities: [user_entity_1.User],
                 synchronize: true,
             }),
+            profile_module_1.ProfileModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

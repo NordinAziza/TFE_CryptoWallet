@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -14,11 +15,12 @@ import { User } from './user/entity/user.entity';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'nordin',
+      password: 'root',
       database: 'wallet',
       entities: [User],
       synchronize: true,
     }),
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

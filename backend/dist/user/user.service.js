@@ -30,6 +30,9 @@ let UserService = class UserService {
     getUser(id) {
         return this.userRepository.findOne({ where: { id: (0, typeorm_2.Equal)(id) } });
     }
+    findByEmail(email) {
+        return this.userRepository.findOne({ where: { email } });
+    }
 };
 UserService = __decorate([
     (0, common_1.Injectable)(),
