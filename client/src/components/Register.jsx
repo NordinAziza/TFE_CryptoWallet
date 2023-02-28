@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import React, { useState } from 'react';
+import UserLogin from '../contracts/UserLogin.json'
 
 const { Component } = require("react");
 
@@ -7,34 +8,82 @@ const { Component } = require("react");
 
     async loadWeb3(){  // chargement de la blockchain
         window.web3=new Web3('HTTP://127.0.0.1:7545');
+
     }
 
 
-    async createBlockchainUser(){
+    async createBlockchainUser(user){       //cree un nouvelle utilisateur dans la blockchain
         this.loadWeb3();
         const web3 = window.web3
+        const newAccount = await web3.eth.personal.newAccount(user.password);
         const accounts = await web3.eth.getAccounts();
-        const newAccount = await web3.eth.personal.newAccount('test');
-        console.log(newAccount);
+        const networkId= await web3.eth.net.getId();
+        const networkData = UserLogin.networks[networkId];
+        if(networkData){          
+                                  // check network
+          const userlogin = new web3.eth.Contract(UserLogin.abi,networkData.address) ;
+          console.log(userlogin)    
+          userlogin.methods.addUser(user.name, user.email, user.password, newAccount).send({from:accounts[0], gas:900000})
+        } 
+
+        console.log(accounts)
+        console.log(newAccount)
+        return(newAccount)
     }
 
-    handleSubmit = event => {
+    handleSubmit = event => {                   //bouton submit
         event.preventDefault();
-        this.createUser();
+        const user = {
+            name: event.target.userName.value,
+            email: event.target.email.value,
+            password: event.target.password.value,
+          };
+        console.log(user)
+        this.createUser(user);
       };
+                                                //creation d'un utilisateur
+      createUser(user){
+        if(this.validateUser(user)){
+           let account =  this.createBlockchainUser(user)
+        }
+          
+      }
+
+      validateUser(user){                    //verification des données passer
+        if (user.name.trim() === '' || user.email.trim() === '' || user.password.trim() === '') {
+            alert('Veuillez remplir tous les champs.');
+            return false;
+          } else if (!/\S+@\S+\.\S+/.test(user.email)) {
+            alert('Veuillez saisir une adresse email valide');
+            return false;
+          } else {
+            return true;
+          }
+      }
 
     render(){
         return(
-                <div>
-                    <h1>Register</h1>
-                    <form onSubmit={this.handleSubmit}>
-                        <label htmlFor="userName">UserName:</label> <input type="text" id="userName" name="userName" />
-                        <label htmlFor="email">e-mail:</label>      <input type="email" name="email" id="email" />
-                        <label htmlFor="password">Password</label>          <input type="password" name="pwd" id="pwd" />
+          <div className='flex items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
+          <div>
+            <h1 className='text-center text-3xl h-12 w-full'>Register</h1>
+            <form onSubmit={this.handleSubmit} className='flex flex-col w-1/3'>
+              <label htmlFor="userName">UserName:</label>
+              <input type="text" name="userName" id="userName" className='w-64 rounded-md py-2 px-3 text-[#301E67] '/>
+              <br />
+              <label htmlFor="email">e-mail:</label>
+              <input type="email" name="email" id="email" className='w-64 rounded-md py-2 px-3 text-[#301E67] ' />
+              <br />
+              <label htmlFor="password">Password:</label>
+              <input type="password" name="password" id="password" className='w-64 rounded-md py-2 px-3 text-[#301E67] '/>
 
-                        <button type="submit">Register</button>
-                    </form>
-              </div>
+              <button type="submit" className='w-64 mt-5 py-1 bg- border-2 rounded-xl border-cyan-300 hover:text-[#A459D1] hover:border-[#A459D1]'>
+                Register
+              </button>
+            </form>
+
+          </div>
+        </div>
+        
         )
     }
  }

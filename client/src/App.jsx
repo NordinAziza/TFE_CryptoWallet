@@ -1,10 +1,14 @@
 import "./App.css";
-import Trade from './components/Trade'
+import Marketplace from './components/Marketplace'
 import Register from './components/Register'
+import Login from './components/Login'
 function App() {
   return (
-    <Register></Register>
+    <div>
+      <Login></Login>
+    </div>
   );
+    
 }
 
 export default App;
