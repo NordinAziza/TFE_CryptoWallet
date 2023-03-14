@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import React, { useState } from 'react';
 import UserLogin from '../contracts/UserLogin.json'
-
+import { useNavigate } from 'react-router';
 const { Component } = require("react");
 
  export default class Register extends Component{
@@ -39,14 +39,18 @@ const { Component } = require("react");
             password: event.target.password.value,
           };
         console.log(user)
-        this.createUser(user);
+        try 
+        {
+          this.createUser(user);
+        } catch (error) {
+          
+        }
       };
                                                 //creation d'un utilisateur
       createUser(user){
         if(this.validateUser(user)){
            let account =  this.createBlockchainUser(user)
         }
-          
       }
 
       validateUser(user){                    //verification des données passer

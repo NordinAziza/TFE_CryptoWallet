@@ -22,6 +22,7 @@ contract UserLogin {
 
         users[_blockchainAddress] = User(_username, _email, _password, _blockchainAddress);
         emailToAddress[_email] = _blockchainAddress;
+        
         usedUsernames[_username] = true;
         
         emit NewUserAdded(_username, _email, _blockchainAddress);

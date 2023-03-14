@@ -1,8 +1,9 @@
 import Web3 from 'web3';
 import React, { useState } from 'react';
 import UserLogin from '../contracts/UserLogin.json'
-const { Component } = require("react");
+import { Link, } from 'react-router-dom';
 
+const { Component } = require("react");
 export default class Login extends Component{
 
     state = {
@@ -41,7 +42,17 @@ export default class Login extends Component{
        if(this.state.userAddress)
        {
          window.userWalletAddress=this.state.userAddress;
-         console.log(window.userWalletAddress)
+
+        
+        //  console.log(window.userWalletAddress);
+        //  let testBalance =await window.web3.eth.getBalance("0x8D351Cbc0673f2eFb6dC229660296dBdF3a6Caab");
+        //  testBalance=Web3.utils.fromWei(testBalance,'ether');
+        //  console.log( testBalance);
+        //  console.log( await window.web3.eth.getBalance(window.userWalletAddress));
+
+         //go to wallet
+         
+         this.props.history.push('/wallet');
          
        }
       };
@@ -62,6 +73,13 @@ export default class Login extends Component{
                         <button type="submit" className='w-64 mt-5 py-1 bg- border-2 rounded-xl border-cyan-300 hover:text-[#A459D1] hover:border-[#A459D1]'>
                             Login
                         </button>
+                        <label htmlFor="register" className='text-center w-64 p-2'>or</label>
+                        <Link to="/register">
+                            <button className='w-64 mt-5 py-1 bg- border-2 rounded-xl border-cyan-300 hover:text-[#A459D1] hover:border-[#A459D1]'>
+                                register
+                            </button>
+                        </Link>
+                        
                     </form>
 
                 </div>
