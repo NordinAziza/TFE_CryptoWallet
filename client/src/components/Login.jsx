@@ -2,10 +2,9 @@ import Web3 from 'web3';
 import React, { useState } from 'react';
 import UserLogin from '../contracts/UserLogin.json'
 import { Link, } from 'react-router-dom';
-
 const { Component } = require("react");
-export default class Login extends Component{
 
+export default class Login extends Component{
     state = {
         userAddress: null,
         login:false,
@@ -13,7 +12,6 @@ export default class Login extends Component{
 
     async loadWeb3(){  // chargement de la blockchain
         window.web3=new Web3('HTTP://127.0.0.1:7545');
-
     }
 
     async login(user){       //cree un nouvelle utilisateur dans la blockchain
@@ -26,11 +24,8 @@ export default class Login extends Component{
           const userlogin = new web3.eth.Contract(UserLogin.abi,networkData.address) ;   
           const userAddress=userlogin.methods.login(user.email,user.password).call()
           return(userAddress)
-        } else return(false)
-  
-        
+        } else return(false)     
     }
-
 
     handleSubmit = async event => {              //bouton submit
         event.preventDefault();
@@ -42,18 +37,13 @@ export default class Login extends Component{
        if(this.state.userAddress)
        {
          window.userWalletAddress=this.state.userAddress;
-
-        
-        //  console.log(window.userWalletAddress);
-        //  let testBalance =await window.web3.eth.getBalance("0x8D351Cbc0673f2eFb6dC229660296dBdF3a6Caab");
-        //  testBalance=Web3.utils.fromWei(testBalance,'ether');
-        //  console.log( testBalance);
-        //  console.log( await window.web3.eth.getBalance(window.userWalletAddress));
+         console.log(window.userWalletAddress);
+         let testBalance =await window.web3.eth.getBalance("0x8D351Cbc0673f2eFb6dC229660296dBdF3a6Caab");
+         testBalance=Web3.utils.fromWei(testBalance,'ether');
+         console.log( testBalance);
 
          //go to wallet
-         
-         this.props.history.push('/wallet');
-         
+        this.props.changeState(this.state.userAddress,user.password);
        }
       };
       
@@ -79,9 +69,7 @@ export default class Login extends Component{
                                 register
                             </button>
                         </Link>
-                        
                     </form>
-
                 </div>
             </div>
         

@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import React, { useState } from 'react';
 import UserLogin from '../contracts/UserLogin.json'
+import { Link, } from 'react-router-dom'
 import { useNavigate } from 'react-router';
 const { Component } = require("react");
 
@@ -83,6 +84,12 @@ const { Component } = require("react");
               <button type="submit" className='w-64 mt-5 py-1 bg- border-2 rounded-xl border-cyan-300 hover:text-[#A459D1] hover:border-[#A459D1]'>
                 Register
               </button>
+
+              <Link to="/">
+                            <button className='w-64 mt-5 py-1 bg- border-2 rounded-xl border-cyan-300 hover:text-[#A459D1] hover:border-[#A459D1]'>
+                               Home Page
+                            </button>
+              </Link>
             </form>
 
           </div>
