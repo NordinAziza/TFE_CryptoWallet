@@ -11,8 +11,6 @@ const { Component } = require("react");
         window.web3=new Web3('HTTP://127.0.0.1:7545');
 
     }
-
-
     async createBlockchainUser(user){       //cree un nouvelle utilisateur dans la blockchain
         this.loadWeb3();
         const web3 = window.web3

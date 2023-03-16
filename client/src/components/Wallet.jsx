@@ -3,30 +3,38 @@ import React, { useState, Component } from 'react';
 
 export default class Wallet extends Component{
 
-    userAddress = this.props.userAdr;
-    userPassword = this.props.userPdw;
-    balanceEth=0;
+    constructor(props) {
+        super(props);
+        this.state = {
+          balanceEth: 0,
+          userAddress : this.props.userAdr,
+          userPassword : this.props.userPdw,
+        };
+      }
+        
+    async componentWillMount() {
+        await this.loadWeb3();
+        const balanceEth = await this.getBalance();
+        this.setState({ balanceEth });
+      }
     
-
     async loadWeb3(){  // chargement de la blockchain
         window.web3=new Web3('HTTP://127.0.0.1:7545');
     }
-    async getDataUser()
-    {
-        this.loadWeb3();
-        const web3 = window.web3
-        this.balance = await window.web3.eth.getBalance(this.userAddress);
-        console.log(this.balance)
-
-    }
-
-
+    async getBalance() {
+        const web3 = window.web3;
+        const balance = await web3.eth.getBalance(this.state.userAddress);
+        console.log(balance)
+        return web3.utils.fromWei(balance, 'ether');
+      }
+ 
     render(){
+      
         return(
             <div className='flex items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
-                <h1>userAddress : {this.userAddress}</h1>
+                <h1>userAddress : {this.state.userAddress}</h1>
                 <br />
-                <h2>Balence : {this.balance} Eth</h2>
+                <h2>Balance : {this.state.balanceEth} Eth</h2>
             </div>
         )
     }

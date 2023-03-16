@@ -37,11 +37,7 @@ export default class Login extends Component{
        if(this.state.userAddress)
        {
          window.userWalletAddress=this.state.userAddress;
-         console.log(window.userWalletAddress);
-         let testBalance =await window.web3.eth.getBalance("0x8D351Cbc0673f2eFb6dC229660296dBdF3a6Caab");
-         testBalance=Web3.utils.fromWei(testBalance,'ether');
-         console.log( testBalance);
-
+         
          //go to wallet
         this.props.changeState(this.state.userAddress,user.password);
        }
@@ -49,7 +45,7 @@ export default class Login extends Component{
       
     render () {
         return(
-            
+               
             <div className='flex items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
                 <div>
                     <h1 className='text-center text-3xl h-12 w-full'>Login</h1>
