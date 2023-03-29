@@ -14,18 +14,19 @@ contract UserLogin {
     mapping(string => bool) private usedUsernames;
     
     event NewUserAdded(string username, string email, address blockchainAddress);
-
-    function addUser(string memory _username, string memory _email, string memory _password, address _blockchainAddress ) public {
+    function addUser(string memory _username, string memory _email, string memory _password, address _blockchainAddress ) public payable {
+        require(msg.value >= 1 ether, "Insufficient ether sent");
         require(users[_blockchainAddress].blockchainAddress != _blockchainAddress, "User already exists"); 
         require(emailToAddress[_email] == address(0), "Email is already registered");
         require(!usedUsernames[_username], "Username is already taken");
 
         users[_blockchainAddress] = User(_username, _email, _password, _blockchainAddress);
         emailToAddress[_email] = _blockchainAddress;
-        
         usedUsernames[_username] = true;
-        
         emit NewUserAdded(_username, _email, _blockchainAddress);
+
+        // transfer 1 ether to the new user's account
+        payable(_blockchainAddress).transfer(1 ether);
     }
 
     function getUserByAddress(address _blockchainAddress) public view returns (string memory, string memory, string memory, address) {

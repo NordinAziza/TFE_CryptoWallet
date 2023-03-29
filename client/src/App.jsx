@@ -20,7 +20,7 @@ function App() {
 
   return (
           <Routes>
-            <Route path="/" element={login ? <Wallet userAdr={userAdr} userPdw={userPdw} ></Wallet> : <Login login={login} changeState={changeState} ></Login> }></Route>
+            <Route path="/" element={login ? <Wallet userAdr={userAdr} ></Wallet> : <Login login={login} changeState={changeState} ></Login> }></Route>
             <Route path="/register" element={<Register></Register>}></Route>
             <Route path="/marketplace" element={<Marketplace></Marketplace>}></Route>
           </Routes>

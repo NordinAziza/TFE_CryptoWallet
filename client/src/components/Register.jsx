@@ -9,26 +9,27 @@ const { Component } = require("react");
 
     async loadWeb3(){  // chargement de la blockchain
         window.web3=new Web3('HTTP://127.0.0.1:7545');
-
     }
     async createBlockchainUser(user){       //cree un nouvelle utilisateur dans la blockchain
-        this.loadWeb3();
-        const web3 = window.web3
-        const newAccount = await web3.eth.personal.newAccount(user.password);
-        const accounts = await web3.eth.getAccounts();
-        const networkId= await web3.eth.net.getId();
-        const networkData = UserLogin.networks[networkId];
-        if(networkData){          
-                                  // check network
-          const userlogin = new web3.eth.Contract(UserLogin.abi,networkData.address) ;
-          console.log(userlogin)    
-          userlogin.methods.addUser(user.name, user.email, user.password, newAccount).send({from:accounts[0], gas:900000})
-        } 
-
-        console.log(accounts)
-        console.log(newAccount)
-        return(newAccount)
-    }
+      this.loadWeb3();
+      const web3 = window.web3
+      const newAccount = await web3.eth.personal.newAccount(user.password);
+      const accounts = await web3.eth.getAccounts();
+      const networkId= await web3.eth.net.getId();
+      const networkData = UserLogin.networks[networkId];
+      if(networkData){          
+                                // check network
+        const userlogin = new web3.eth.Contract(UserLogin.abi,networkData.address) ;
+        console.log(userlogin)    
+        userlogin.methods.addUser(user.name, user.email, user.password, newAccount).send
+          ({from:accounts[0] ,gas:9000000, value: web3.utils.toWei('1', 'ether')}) // ajoute 1 eth quand le compte est cree
+      } 
+  
+      console.log(accounts)
+      console.log(newAccount)
+      return(newAccount)
+  }
+  
 
     handleSubmit = event => {                   //bouton submit
         event.preventDefault();
