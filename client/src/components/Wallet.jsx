@@ -17,11 +17,12 @@ export default class Wallet extends Component{
         };
       }
       
-      async GetDataFromApi()
+      async GetEtherFromApi()
       {
-        const response = await fetch('https://api.coincap.io/v2/assets/ethereum');
+        var url = 'https://api.wazirx.com/sapi/v1/ticker/24hr?symbol=ethusdt';
+        const response = await fetch(url);
         const coinData = await response.json();
-        console.log(coinData.data)
+        console.log(coinData)
         this.setState({ coinData })
         this.setState({ loaded: true })
       }
@@ -49,7 +50,7 @@ export default class Wallet extends Component{
           this.state.userName = user[0];
           this.state.userEmail = user[1];
           this.state.userPassword = user[2];
-          await this.GetDataFromApi();
+          await this.GetEtherFromApi();
         }
         return web3.utils.fromWei(balance, 'ether');
       }
@@ -62,7 +63,7 @@ export default class Wallet extends Component{
                 <h2>Username: {this.state.userName}</h2>
                 <h2>Blockchain Address : {this.state.userAddress}</h2>
                 <h2>Balance : {this.state.balanceEth} Eth  </h2>
-                <h2>Total Balance in USD :{this.state.loaded ? this.state.balanceEth*+this.state.coinData.data.priceUsd : 'loading...'}$</h2>
+                <h2>Total Balance in USD :{this.state.loaded ? this.state.balanceEth*+this.state.coinData.lastPrice : 'loading...'}$</h2>
               </div>
             </div>
         )

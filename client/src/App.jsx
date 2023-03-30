@@ -5,6 +5,7 @@ import Wallet from "./components/Wallet";
 import Login from './components/Login'
 import Marketplace from './components/Marketplace'
 import { Routes, Route } from 'react-router-dom'
+import Graph from "./components/Graph";
 
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
 
   return (
           <Routes>
-            <Route path="/" element={login ? <Wallet userAdr={userAdr} ></Wallet> : <Login login={login} changeState={changeState} ></Login> }></Route>
+            <Route path="/" element={login ? <Wallet userAdr={userAdr} ></Wallet> : <Graph></Graph> /*<Login login={login} changeState={changeState} ></Login>*/ }></Route>
             <Route path="/register" element={<Register></Register>}></Route>
             <Route path="/marketplace" element={<Marketplace></Marketplace>}></Route>
           </Routes>
