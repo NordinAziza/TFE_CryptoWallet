@@ -3,56 +3,35 @@ import { Chart } from 'react-google-charts';
 const { Component } = require("react");
 export default class Graph extends Component{ 
 
-  data = [    ['Day', 'Low', 'Open', 'Close', 'High'],
-  ...[
-    [
-      1679702400,
-      1799.15,
-      1810,
-      1735.01,
-      1740,
-      1.9783000000000002
-    ],
-    [
-      1679788800,
-      1807.35,
-      1807.91,
-      1758.85,
-      1775,
-      2.8619000000000008
-    ],
-    [
-      1679875200,
-      1770.31,
-      1772.09,
-      1700,
-      1708.86,
-      7.9248
-    ],
-    [
-      1679961600,
-      1718.87,
-      1791.83,
-      1705.9,
-      1775.65,
-      3.6420999999999997
-    ],
-    [
-      1680048000,
-      1772.84,
-      1823.81,
-      1772.84,
-      1801.87,
-      7.135799999999998
-    ]
-  ].map((day) => [      new Date(day[0] * 1000),
-    day[3],
-    day[1],
-    day[2],
-    day[4],
-  ])
-];
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      data : null,
+    };
+  }
+  async componentDidMount() {
+    const data = await this.getGraphData('eth');
+    this.setState({ data });
+  }
+  
+
+  async getGraphData(coin) {
+    coin = "ethusdt";
+    var url = `https://api.wazirx.com/sapi/v1/klines?symbol=${coin}&limit=1&interval=1d`;
+    const response = await fetch(url);
+    const coinData = await response.json();
+    console.log(coinData);
+  
+    const data = await coinData.map(d => [new Date(d[0]), d[1], d[2], d[3], d[4]]);
+  
+    return [
+      ['Date', 'Open', 'High', 'Low', 'Close'],
+      ...data.reverse()
+    ];
+  }
+  
+ 
   render () {
     return(
       <div>
@@ -60,16 +39,17 @@ export default class Graph extends Component{
           width={'100%'}
           height={'400px'}
           chartType="CandlestickChart"
-          data={this.data}
+          data={this.state.data}
           options={{
             legend: 'none',
             candlestick: {
-              fallingColor: { strokeWidth: 0, fill: '#a52714' },
-              risingColor: { strokeWidth: 0, fill: '#0f9d58' },
+              fallingColor: { strokeWidth: 1, fill: '#a52714' },
+              risingColor: { strokeWidth: 1, fill: '#0f9d58' },
             },
           }}
-      />
+        />
       </div>
     )
   }
+  
 }
