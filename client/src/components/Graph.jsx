@@ -23,12 +23,12 @@ export default class Graph extends React.Component {
     var url = `https://api.wazirx.com/sapi/v1/klines?symbol=${coin}&limit=100&interval=4h&endTime=${now}`;
     const response = await fetch(url);
     const coinData = await response.json();
-
+  
     const data =  coinData.map(d => [new Date(d[0]*1000), d[1], d[2], d[3], d[4]]);
-
+  
     return [
       ['Date', 'Open', 'High', 'Low', 'Close'],
-      ...data.reverse()
+      ...data
     ];
   }
 
@@ -46,8 +46,9 @@ export default class Graph extends React.Component {
             backgroundColor: '#03001C',
             series: [{ color: 'green' }],
             candlestick: {
-              fallingColor: { strokeWidth: 0, fill: 'red' },
-              risingColor: { strokeWidth: 0, fill: 'green' },
+              fallingColor: { stroke:'red' ,strokeWidth: 0, fill: 'red' },
+              risingColor: {stroke:'green' ,strokeWidth: 0, fill: 'green' },
+              hollowIsRising: true,
             },
             hAxis: {
               textStyle: {

@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import React, { useState } from 'react';
 import UserLogin from '../contracts/UserLogin.json'
-import { Link, } from 'react-router-dom'
+import { Link, } from 'react-router-dom';
 import { useNavigate } from 'react-router';
 const { Component } = require("react");
 
