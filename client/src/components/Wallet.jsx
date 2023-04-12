@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import React, {Component } from 'react';
-import UserLogin from '../contracts/UserLogin.json'
+import UserLogin from '../contracts/UserLogin.json';
+import { Link, } from 'react-router-dom';
 export default class Wallet extends Component{
   
 
@@ -62,7 +63,7 @@ export default class Wallet extends Component{
                 <h1 className='text-center text-4xl'>Wallet:</h1>
                 <h2>Username: {this.state.userName}</h2>
                 <h2>Blockchain Address : {this.state.userAddress}</h2>
-                <h2>Balance : {this.state.balanceEth} Eth  </h2>
+                <h2>Balance : {this.state.balanceEth} <Link to="/graph"> Eth</Link></h2>
                 <h2>Total Balance in USD :{this.state.loaded ? this.state.balanceEth*+this.state.coinData.lastPrice : 'loading...'}$</h2>
               </div>
             </div>
