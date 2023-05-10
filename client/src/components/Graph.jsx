@@ -12,15 +12,18 @@ export default class Graph extends React.Component {
   }
 
   async componentDidMount() {
-    const data = await this.getGraphData('eth');
+    const url = window.location.href; // get the current URL
+    const match = url.match(/\/graph\/(\w+)/); // extract the string after "/graph/"
+    const URLcoin = match ? match[1] : null; // store the string in a variable or null if not found
+    const coin =URLcoin.toLocaleLowerCase();
+    const data = await this.getGraphData(coin);
     this.setState({ data });
     this.setState.loaded = true;
   }
 
   async getGraphData(coin) {
-    coin = "ethusdt";
     var now = Date.now();
-    var url = `https://api.wazirx.com/sapi/v1/klines?symbol=${coin}&limit=100&interval=4h&endTime=${now}`;
+    var url = `https://api.wazirx.com/sapi/v1/klines?symbol=${coin}&limit=110&interval=4h&endTime=${now}`;
     const response = await fetch(url);
     const coinData = await response.json();
   
