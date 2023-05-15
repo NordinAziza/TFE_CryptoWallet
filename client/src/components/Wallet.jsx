@@ -17,7 +17,7 @@ export default class Wallet extends Component{
           coinData:{},
           tokens:[],
           tokensDatas:[],
-          tokensBalance:[],
+          tokensBalance:{symbol:[],balance:[]},
           totalBalance:0,
           loaded: false
         };
@@ -44,6 +44,7 @@ export default class Wallet extends Component{
           const tokenData = await this.getTokenData(symbol);
           this.state.tokensDatas.push(tokenData);
         }
+        this.state.tokensDatas.push(this.coinData);
         return "ok";
       }
       
@@ -55,6 +56,7 @@ export default class Wallet extends Component{
         await this.GetTokens();
         await this.getTokensBalance();
         await this.getTokensData();
+      
         this.totalBalance=this.getTotalBalance();
         this.setState({ loaded: true })
       }
@@ -95,30 +97,38 @@ export default class Wallet extends Component{
           {
             this.state.tokens.push( await token.methods.getTokenData(i).call() );
           }
-          console.log(this.state.tokens)
           return true
         }
         else return false ;
       }
-      sortTokens(sort) {
-        if (sort === "ascending") {
-          const sortedTokens = this.state.tokens.slice().sort();
-          const sortedBalances = this.state.tokensBalance.slice().sort((a, b) => {
-            const indexA = this.state.tokens.indexOf(sortedTokens[a]);
-            const indexB = this.state.tokens.indexOf(sortedTokens[b]);
-            return indexA - indexB;
-          });
-          this.setState({ tokens: sortedTokens, tokensBalance: sortedBalances });
-        } else if (sort === "descending") {
-          const sortedTokens = this.state.tokens.slice().sort().reverse();
-          const sortedBalances = this.state.tokensBalance.slice().sort((a, b) => {
-            const indexA = this.state.tokens.indexOf(sortedTokens[a]);
-            const indexB = this.state.tokens.indexOf(sortedTokens[b]);
-            return indexA - indexB;
-          }).reverse();
-          this.setState({ tokens: sortedTokens, tokensBalance: sortedBalances });
-        }
+      sortTokens(sortOrder)
+       {
+     
+        const tokens = this.state.tokensBalance.symbol.slice();
+        const balances = this.state.tokensBalance.balance.slice();
+        
+        // combine tokens and balances into an array of objects
+        const combined = tokens.map((token, index) => ({ token, balance: balances[index] }));
+      
+        // sort the array of objects based on the balance and sortOrder
+        combined.sort((a, b) => {
+          if (sortOrder === 'ascending')
+          {
+            return a.balance - b.balance;
+          } else if (sortOrder === 'descending')
+          {
+            return b.balance - a.balance;
+          }
+        });
+      
+        // unzip the sorted array of objects back into separate arrays
+        const sortedTokens = combined.map(obj => obj.token);
+        const sortedBalances = combined.map(obj => obj.balance);
+
+        this.setState({ tokensBalance: { symbol: sortedTokens, balance: sortedBalances } });
+
       }
+      
       
 
      async getTokensBalance()
@@ -133,9 +143,12 @@ export default class Wallet extends Component{
           const tokensMax = 3;
           for(let i = 1 ; i <= tokensMax; i++)
           {
-            this.state.tokensBalance.push( await token.methods.balanceOf(this.state.userAddress,i).call() );
+            this.state.tokensBalance.balance.push( await token.methods.balanceOf(this.state.userAddress,i).call() );
+            this.state.tokensBalance.symbol.push(this.state.tokens[i-1][1]) ;
           }
-          console.log(this.state.tokensBalance)
+          this.state.tokensBalance.symbol.push("ETH")
+          this.state.tokensBalance.balance.push(this.state.balanceEth)
+
           return true
         }
         else return false ;
@@ -151,7 +164,7 @@ export default class Wallet extends Component{
         }
       
         for (let i = 0; i < 3; i++) {
-          const tokenBalance = parseFloat(this.state.tokensBalance[i]);
+          const tokenBalance = parseFloat(this.state.tokensBalance.balance[i]);
           const tokenLastPrice = parseFloat(this.state.tokensDatas[i].lastPrice);
       
           if (!isNaN(tokenBalance) && !isNaN(tokenLastPrice)) {
@@ -174,43 +187,35 @@ export default class Wallet extends Component{
         );
       }
         return(
-            <div className='flex items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
-              <div>
-                <h1 className='text-center text-4xl'>Wallet:</h1>
-                <h2>Username: {this.state.userName}</h2>
-                <h2>Blockchain Address : {this.state.userAddress}</h2>
-                <h2>
-                    Balance :
-                    <select className='bg-[#03001C] border-cyan-300 border-2 rounded-lg' defaultValue={'none'} onChange={(e) => this.sortTokens(e.target.value)}>
-                      <option value="none">None</option>
-                      <option value="ascending">Ascending</option>
-                      <option value="descending">Descending</option>
-                    </select>
+          <div className='flex items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
+            <div>
+              <h1 className='text-center text-4xl'>Wallet:</h1>
+              <h2>Username: {this.state.userName}</h2>
+              <h2>Blockchain Address : {this.state.userAddress}</h2>
+              <h2>
+                Balance :
+                <select className='bg-[#03001C] border-cyan-300 border-2 rounded-lg ml-1' defaultValue={'none'} onChange={(e) => this.sortTokens(e.target.value)}>
+                  <option value="none">Sort</option>
+                  <option value="ascending">Ascending</option>
+                  <option value="descending">Descending</option>
+                </select>
+                
+                {this.state.tokensBalance.balance.map((balance, index) => (
+                  <span key={index}>
+                    {balance}
+                    <Link to={this.state.loaded ? { pathname: "/graph/"+this.state.tokensBalance.symbol[index]+"usdt" } : ""}>
+                      <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'>{this.state.loaded ? this.state.tokensBalance.symbol[index] : "loading..."}</span>
+                    </Link>
+                  </span>
+                ))}
 
-                     {this.state.balanceEth}
-                    <Link to={{ pathname: "/graph/ethusdt" }}>
-                        <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'>Eth</span>
-                    </Link>
-                    {this.state.tokensBalance[0]}
-                    <Link to={ this.state.loaded?{ pathname: "/graph/"+this.state.tokens[0][1]+"usdt"} :""}>
-                      <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'>{this.state.loaded? this.state.tokens[0][1] : "loading..."}</span>
-                    </Link>
-                    {this.state.tokensBalance[1]}
-                    <Link to={ this.state.loaded?{ pathname: "/graph/"+this.state.tokens[1][1]+"usdt"} :""}>
-                      <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'> {this.state.loaded? this.state.tokens[1][1] : "loading..."}</span>
-                    </Link>
-                    {this.state.tokensBalance[2]}
-                    <Link to={ this.state.loaded?{ pathname: "/graph/"+this.state.tokens[2][1]+"usdt"} :""}>
-                      <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'>{this.state.loaded? this.state.tokens[2][1] : "loading..."}</span>
-                    </Link>
-                </h2>
-                <h2>Total Balance in USD :
-                  {
-                    this.state.loaded ? this.totalBalance : 'loading...'
-                  }$
-                </h2>
-              </div>
+              </h2>
+              <h2>Total Balance in USD :
+                {this.state.loaded ? this.totalBalance : 'loading...'}$
+              </h2>
             </div>
+          </div>
+
         )
     }
 }
