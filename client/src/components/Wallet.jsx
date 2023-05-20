@@ -2,6 +2,9 @@ import Web3 from 'web3';
 import React, {Component } from 'react';
 import UserLogin from '../contracts/UserLogin.json';
 import Token from '../contracts/Token.json';
+import Nav from './Nav';
+import CircularProgress from '@mui/material/CircularProgress';
+import Bar from './Bar';
 import { Link, } from 'react-router-dom';
 export default class Wallet extends Component{
   
@@ -22,33 +25,7 @@ export default class Wallet extends Component{
           loaded: false
         };
       }
- // retreving the etherenum data from api      
-      async GetEtherFromApi()
-      {
-        var url = 'https://api.wazirx.com/sapi/v1/ticker/24hr?symbol=ethusdt';
-        const response = await fetch(url);
-        const coinData = await response.json();
-        this.setState({ coinData })
-      }
-      async  getTokenData(symbol) {
-        const url = `https://api.wazirx.com/sapi/v1/ticker/24hr?symbol=${symbol.toLowerCase()}usdt`;
-        const response = await fetch(url);
-        const tokenData = await response.json();
-        return tokenData;
-      }
-      
-      async  getTokensData() {
-        for (let i = 0; i < 3; i++) {
-          const symbol = this.state.tokens[i][1];
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          const tokenData = await this.getTokenData(symbol);
-          this.state.tokensDatas.push(tokenData);
-        }
-        this.state.tokensDatas.push(this.coinData);
-        return "ok";
-      }
-      
-        
+     
     async componentWillMount() {
         await this.loadWeb3();
         const balanceEth = await this.getUserData();
@@ -56,9 +33,7 @@ export default class Wallet extends Component{
         await this.GetTokens();
         await this.getTokensBalance();
         await this.getTokensData();
-      
-        this.totalBalance=this.getTotalBalance();
-        this.setState({ loaded: true })
+        this.setState({ loaded: true, totalBalance:this.getTotalBalance() })
       }
     
     async loadWeb3(){  //loading blockchain
@@ -101,6 +76,32 @@ export default class Wallet extends Component{
         }
         else return false ;
       }
+      // retreving the etherenum data from api      
+      async GetEtherFromApi()
+      {
+        var url = 'https://api.wazirx.com/sapi/v1/ticker/24hr?symbol=ethusdt';
+        const response = await fetch(url);
+        const coinData = await response.json();
+        this.setState({ coinData })
+      }
+      async  getTokenData(symbol) {
+        const url = `https://api.wazirx.com/sapi/v1/ticker/24hr?symbol=${symbol.toLowerCase()}usdt`;
+        const response = await fetch(url);
+        const tokenData = await response.json();
+        return tokenData;
+      }
+      
+      async  getTokensData() {
+        for (let i = 0; i < 3; i++) {
+          const symbol = this.state.tokens[i][1];
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          const tokenData = await this.getTokenData(symbol);
+          this.state.tokensDatas.push(tokenData);
+        }
+        this.state.tokensDatas.push(this.state.coinData);
+        return "ok";
+      }
+      
       sortTokens(sortOrder)
        {
      
@@ -182,24 +183,29 @@ export default class Wallet extends Component{
           <div className="flex flex-col items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono">
             <h1>Loading...</h1>
             <br />
-            <div className="w-16 h-16 border-4 border-cyan-300 rounded-full animate-spin"></div>
+            <CircularProgress />
           </div>
         );
       }
         return(
+      
           <div className='flex items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
+            <div>
+              <Nav ></Nav>
+            </div>
             <div>
               <h1 className='text-center text-4xl'>Wallet:</h1>
               <h2>Username: {this.state.userName}</h2>
               <h2>Blockchain Address : {this.state.userAddress}</h2>
               <h2>
                 Balance :
-                <select className='bg-[#03001C] border-cyan-300 border-2 rounded-lg ml-1' defaultValue={'none'} onChange={(e) => this.sortTokens(e.target.value)}>
+                <br />
+                <select className='bg-[#03001C] border-cyan-300 border-2 rounded-lg m-2' defaultValue={'none'} onChange={(e) => this.sortTokens(e.target.value)}>
                   <option value="none">Sort</option>
                   <option value="ascending">Ascending</option>
                   <option value="descending">Descending</option>
                 </select>
-                
+    
                 {this.state.tokensBalance.balance.map((balance, index) => (
                   <span key={index}>
                     {balance}
@@ -209,9 +215,11 @@ export default class Wallet extends Component{
                   </span>
                 ))}
 
+              <Bar tokensBalance={this.state.tokensBalance} tokensDatas={this.state.tokensDatas} total={this.state.totalBalance} ></Bar>
+
               </h2>
               <h2>Total Balance in USD :
-                {this.state.loaded ? this.totalBalance : 'loading...'}$
+                {this.state.loaded ? this.state.totalBalance.toFixed(2) : 'loading...'}$
               </h2>
             </div>
           </div>
