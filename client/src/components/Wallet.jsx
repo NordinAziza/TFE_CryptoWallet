@@ -8,38 +8,49 @@ import Bar from './Bar';
 import { Link, } from 'react-router-dom';
 export default class Wallet extends Component{
   
-
     constructor(props) {
         super(props);
         this.state = {
           balanceEth: 0, //etherenum balance from the blockchain
           userAddress : this.props.userAdr,
-          userPassword : '',
+          userPassword : this.props.userPdw,
           userEmail: '',
           userName:'',
-          coinData:{},
-          tokens:[],
-          tokensDatas:[],
-          tokensBalance:{symbol:[],balance:[]},
-          totalBalance:0,
-          loaded: false
+          coinData:{},//etherenum datas from api
+          tokens:[],// tokens from the blockchain
+          tokensDatas:[],//blockchain's tokens datas
+          tokensBalance:{symbol:[],balance:[]},//user's tokens amount
+          totalBalance:0, // total balance in usd
+          loaded: false // loading state
         };
       }
-     
+//loading the data before we render the page    
     async componentWillMount() {
         await this.loadWeb3();
+        const storedUserData = localStorage.getItem('userData');
+        if (storedUserData) {
+          const user = JSON.parse(storedUserData);
+          this.setState({
+            userName: user[0],
+            userEmail: user[1],
+            userPassword: user[2]
+          });
+        }
         const balanceEth = await this.getUserData();
         this.setState({ balanceEth });
         await this.GetTokens();
         await this.getTokensBalance();
         await this.getTokensData();
+        localStorage.setItem("tokensDatas",JSON.stringify(this.state.tokensDatas));
+        localStorage.setItem("tokensBalance",JSON.stringify(this.state.tokensBalance));
         this.setState({ loaded: true, totalBalance:this.getTotalBalance() })
       }
-    
+
+//fetching the user's data
     async loadWeb3(){  //loading blockchain
         window.web3=new Web3('HTTP://127.0.0.1:7545');
     }
-    //loading users data from blockchain
+    //loading user's data from blockchain
     async getUserData() {
         this.loadWeb3();
         const web3 = window.web3;
@@ -53,6 +64,8 @@ export default class Wallet extends Component{
           this.state.userName = user[0];
           this.state.userEmail = user[1];
           this.state.userPassword = user[2];
+
+          localStorage.setItem('userData', JSON.stringify(user));
           await this.GetEtherFromApi();
         }
         return web3.utils.fromWei(balance, 'ether');
@@ -90,7 +103,7 @@ export default class Wallet extends Component{
         const tokenData = await response.json();
         return tokenData;
       }
-      
+    //fetching the tokens's datas form api
       async  getTokensData() {
         for (let i = 0; i < 3; i++) {
           const symbol = this.state.tokens[i][1];
@@ -101,16 +114,13 @@ export default class Wallet extends Component{
         this.state.tokensDatas.push(this.state.coinData);
         return "ok";
       }
-      
+    // sorting the user's tokens
       sortTokens(sortOrder)
        {
-     
         const tokens = this.state.tokensBalance.symbol.slice();
         const balances = this.state.tokensBalance.balance.slice();
-        
         // combine tokens and balances into an array of objects
         const combined = tokens.map((token, index) => ({ token, balance: balances[index] }));
-      
         // sort the array of objects based on the balance and sortOrder
         combined.sort((a, b) => {
           if (sortOrder === 'ascending')
@@ -121,17 +131,12 @@ export default class Wallet extends Component{
             return b.balance - a.balance;
           }
         });
-      
-        // unzip the sorted array of objects back into separate arrays
+        // back into separate arrays
         const sortedTokens = combined.map(obj => obj.token);
         const sortedBalances = combined.map(obj => obj.balance);
-
         this.setState({ tokensBalance: { symbol: sortedTokens, balance: sortedBalances } });
-
       }
-      
-      
-
+    //getting the balances foreach user's
      async getTokensBalance()
       {
         this.loadWeb3();
@@ -154,6 +159,7 @@ export default class Wallet extends Component{
         }
         else return false ;
       }
+      //calulating the total balance of the user
       getTotalBalance() {
         let total = 0;
       
@@ -172,9 +178,26 @@ export default class Wallet extends Component{
             total += tokenBalance * tokenLastPrice;
           }
         }
-  
         return total;
       }
+
+      //logout
+      handleLogout = () => {
+        this.setState({
+          balanceEth: 0,
+          userAddress: '',
+          userPassword: '',
+          userEmail: '',
+          userName: '',
+          coinData: {},
+          tokens: [],
+          tokensDatas: [],
+          tokensBalance: { symbol: [], balance: [] },
+          totalBalance: 0,
+          loaded: false
+        });
+        this.props.changeState("", "");
+      };
       
     
     render(){
@@ -183,17 +206,23 @@ export default class Wallet extends Component{
           <div className="flex flex-col items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono">
             <h1>Loading...</h1>
             <br />
-            <CircularProgress />
+            <CircularProgress/>
           </div>
         );
       }
         return(
-      
-          <div className='flex items-center justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
+         
+        <div className='flex flex-wrap justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
+           <div className="flex w-full justify-end fixed text-right">
+              <button onClick={this.handleLogout} className="hover:text-[#A459D1] text-cyan-300 m-4 p-2 border-2 border-cyan-300 rounded-xl">
+                Logout
+              </button>
+            </div>
+            <div className='flex items-center ml-32 justify-center'>
             <div>
               <Nav ></Nav>
             </div>
-            <div>
+            <div className='items-center'>
               <h1 className='text-center text-4xl'>Wallet:</h1>
               <h2>Username: {this.state.userName}</h2>
               <h2>Blockchain Address : {this.state.userAddress}</h2>
@@ -224,6 +253,7 @@ export default class Wallet extends Component{
             </div>
           </div>
 
+        </div>
         )
     }
 }

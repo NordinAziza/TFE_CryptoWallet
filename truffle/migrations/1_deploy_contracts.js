@@ -4,7 +4,7 @@ const Tokens = artifacts.require("Token");
 
 module.exports = function (deployer) {
   //deployer.deploy(Marketplace);
- // deployer.deploy(UserLogin);
+  deployer.deploy(UserLogin);
   deployer.deploy(Tokens);
 
 

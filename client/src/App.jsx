@@ -10,13 +10,13 @@ import GraphWrapper from './components/GraphWrapper';
 import { Routes, Route } from 'react-router-dom'
 
 function App() {
-  var [login, setLogin] = useState(false);
-  var [userAdr, setUserAdr] = useState("");
-  var [userPdw, setUserPdw] = useState("");
+  const [login, setLogin] = useState(false);
+  const [userAdr, setUserAdr] = useState("");
+  const [userPdw, setUserPdw] = useState("");
 
-  function changeState(userAdress, password) {
-    setLogin(!login);
-    setUserAdr(userAdress);
+  function changeState(userAddress, password) {
+    setLogin(prevLogin => !prevLogin); // Toggle the value of login
+    setUserAdr(userAddress);
     setUserPdw(password);
   }
 
@@ -25,11 +25,15 @@ function App() {
       <Route
         path="/"
         element={
-          login ? <Wallet userAdr={userAdr} /> : <Login login={login} changeState={changeState} />
+          login ? (
+            <Wallet userAdr={userAdr} changeState={changeState} />
+          ) : (
+            <Login login={login} changeState={changeState} />
+          )
         }
       />
       <Route path="/register" element={<Register />} />
-      <Route path="/marketplace" element={<Marketplace />} />
+      <Route path="/marketplace" element={<Marketplace/>} />
       <Route path="/graph/:coin" element={<GraphWrapper />} />
       <Route path="/tokens" element={<Tokens />} />
     </Routes>
