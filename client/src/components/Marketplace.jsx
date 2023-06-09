@@ -54,14 +54,13 @@ import CircularProgress from '@mui/material/CircularProgress';
         const TradeRequest = await response.json();
         this.setState({ TradeRequest })
     }
-    async updateTradeRequestToApi(status) {
-      var url = 'https://localhost:7038/api/TradeRequest';
+    async updateTradeRequestToApi(id, newStatus) {
+      var url = `https://localhost:7038/api/TradeRequest?id=${id}&newStatus=${newStatus}`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ status })
+        }
       });
     
       if (response.ok) {
@@ -70,6 +69,7 @@ import CircularProgress from '@mui/material/CircularProgress';
         console.error('Failed to update TradeRequest');
       }
     }
+    
     async handleTrade(tradeRequest) {
       try {
         this.loadWeb3();
@@ -83,7 +83,7 @@ import CircularProgress from '@mui/material/CircularProgress';
           const receiver = this.state.user;
           var tokenToTradeId = "";
           var tokenToReceiveId = "";
-    
+
           tradeRequest.tokenToTrade === "BTC" ? (tokenToTradeId = 1) : tradeRequest.tokenToTrade === "DOGE" ? (tokenToTradeId = 2) : (tokenToTradeId = 3);
           tradeRequest.tokenToReceive === "BTC" ? (tokenToReceiveId = 1) : tradeRequest.tokenToReceive === "DOGE" ? (tokenToReceiveId = 2) : (tokenToReceiveId = 3);
     
@@ -91,31 +91,27 @@ import CircularProgress from '@mui/material/CircularProgress';
           await web3.eth.personal.unlockAccount(sender.address, sender.password, null, null);
           await web3.eth.personal.unlockAccount(receiver[3], receiver[2], null, null);
           // Convert the token amount to wei
-          const amountToTradeWei = web3.utils.toWei(tradeRequest.amountToTrade.toString(), 'ether');
-          const amountToReceiveWei = web3.utils.toWei(tradeRequest.amountToReceive.toString(), 'ether');
 
-          const amountToTradeUint = web3.utils.toBN(amountToTradeWei);
-          const amountToReceiveUint = web3.utils.toBN(amountToReceiveWei);
+          const amountToTrade = parseInt(tradeRequest.amountToTrade) //* (10**18);
+          const amountToReceive = parseInt(tradeRequest.amountToReceive)//* (10**18);
     
           // Approve the trade amount from sender's address to the contract
-          await token.methods.approve(sender.address, amountToTradeUint, tokenToTradeId).send({ from: sender.address });
-    
+          await token.methods.approve(sender.address, amountToTrade, tokenToTradeId).send({ from: sender.address });
           // Transfer tokens from sender's address to receiver's address
-          var success1 = await token.methods.transferFrom(sender.address, receiver[3], amountToTradeUint, tokenToTradeId).send({ from: sender.address });
-    
+          var success1 = await token.methods.transferFrom(sender.address, receiver[3], amountToTrade, tokenToTradeId).send({ from: sender.address });
+          console.log(success1)
           if (success1) {
             // Transfer tokens from receiver's address back to sender's address
-            await token.methods.approve(receiver[3], amountToReceiveUint, tokenToReceiveId).send({ from: receiver[3] });
-          var success2 = await token.methods.transferFrom(receiver[3], sender.address,amountToReceiveUint, tokenToReceiveId).send({ from: receiver[3] });
-    
-            if (success2) return true;
+            await token.methods.approve(receiver[3], amountToReceive, tokenToReceiveId).send({ from: receiver[3] });
+          var success2 = await token.methods.transferFrom(receiver[3], sender.address,amountToReceive, tokenToReceiveId).send({ from: receiver[3] });
           }
+
           if(success1 && success2 )
-          {
+           {
             // TO DO put request to change the status to complete
-            console.log('ok')
-            await this.updateTradeRequestToApi("closed");
-          }
+            
+            await this.updateTradeRequestToApi(tradeRequest.id,"closed");
+           }
         }
       } catch (error) {
         console.log(error);
