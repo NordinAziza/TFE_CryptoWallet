@@ -6,7 +6,9 @@ import { useNavigate } from 'react-router';
 const { Component } = require("react");
 
  export default class Register extends Component{
-
+  state = {
+    registered: false,
+  };
     async loadWeb3(){  // chargement de la blockchain
         window.web3=new Web3('HTTP://127.0.0.1:7545');
     }
@@ -25,8 +27,6 @@ const { Component } = require("react");
           ({from:accounts[0] ,gas:9000000, value: web3.utils.toWei('1', 'ether')}) // ajoute 1 eth quand le compte est cree
       } 
   
-      console.log(accounts)
-      console.log(newAccount)
       return(newAccount)
   }
   
@@ -42,6 +42,7 @@ const { Component } = require("react");
         try 
         {
           this.createUser(user);
+          this.setState({registered:true})
         } catch (error) {
           
         }
@@ -83,13 +84,16 @@ const { Component } = require("react");
               <button type="submit" className='w-64 mt-5 py-1 bg- border-2 rounded-xl border-cyan-300 hover:text-[#A459D1] hover:border-[#A459D1]'>
                 Register
               </button>
-
+              {
+                this.state.registered === true ? <div className='w-full'> <p className='text-green-600'>Registration successful!</p> </div> : ""
+              }
               <Link to="/">
                             <button className='w-64 mt-5 py-1 bg- border-2 rounded-xl border-cyan-300 hover:text-[#A459D1] hover:border-[#A459D1]'>
                                Home Page
                             </button>
               </Link>
             </form>
+            
 
           </div>
         </div>

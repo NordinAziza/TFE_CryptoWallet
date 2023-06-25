@@ -5,9 +5,10 @@ import Wallet from "./components/Wallet";
 import Login from './components/Login';
 import Graph from "./components/Graph";
 import Tokens from "./components/Tokens";
+import Token from "./components/Token";
 import Marketplace from './components/Marketplace'
 import GraphWrapper from './components/GraphWrapper';
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 
 function App() {
   const [login, setLogin] = useState(false);
@@ -19,6 +20,9 @@ function App() {
     setUserAdr(userAddress);
     setUserPdw(password);
   }
+  const location = useLocation();
+  const { tokenData } = location.state || {};
+
 
   return (
     <Routes>
@@ -36,6 +40,10 @@ function App() {
       <Route path="/marketplace" element={<Marketplace/>} />
       <Route path="/graph/:coin" element={<GraphWrapper />} />
       <Route path="/tokens" element={<Tokens />} />
+      <Route
+        path="/token/:symbol"
+        element={<Token token={tokenData} />}
+      />
     </Routes>
   );
 }

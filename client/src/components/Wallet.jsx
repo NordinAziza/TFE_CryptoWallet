@@ -238,7 +238,7 @@ export default class Wallet extends Component{
                 {this.state.tokensBalance.balance.map((balance, index) => (
                   <span key={index}>
                     {balance}
-                    <Link to={this.state.loaded ? { pathname: "/graph/"+this.state.tokensBalance.symbol[index]+"usdt" } : ""}>
+                    <Link to={this.state.loaded ? { pathname: "/token/"+this.state.tokensBalance.symbol[index].toLowerCase()+"usdt" } : ""}>
                       <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'>{this.state.loaded ? this.state.tokensBalance.symbol[index] : "loading..."}</span>
                     </Link>
                   </span>

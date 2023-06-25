@@ -10,6 +10,6 @@ app.on('ready', () => {
       nodeIntegration: true
     }
   });
-  mainWindow.loadURL(`http://localhost:3000/`);
+  mainWindow.loadURL(`http://localhost:3000`);
 
 });

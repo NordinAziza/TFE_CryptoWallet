@@ -4,6 +4,8 @@ import Token from '../contracts/Token.json';
 import Nav from './Nav';
 import TradeRequest from './TradeRequest';
 import CircularProgress from '@mui/material/CircularProgress';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus,faMinus } from '@fortawesome/free-solid-svg-icons';
 
  export default class Trade extends Component{
 
@@ -19,6 +21,8 @@ import CircularProgress from '@mui/material/CircularProgress';
             tokensDatas: {},
             selectedSymbol: '',
             selectedBalance: 0,
+            showClosedRequests: false,
+            showAddRequest : false,
             loaded: false
           };
           
@@ -26,7 +30,6 @@ import CircularProgress from '@mui/material/CircularProgress';
     async componentDidMount() {
         this.loadLocalStorage();
         await this.loadTradeRequestFromApi();
-        console.log(this.state.tokensDatas); 
         this.setState({ loaded: true });
       }
   
@@ -69,7 +72,7 @@ import CircularProgress from '@mui/material/CircularProgress';
         console.error('Failed to update TradeRequest');
       }
     }
-    
+
     async handleTrade(tradeRequest) {
       try {
         this.loadWeb3();
@@ -118,8 +121,6 @@ import CircularProgress from '@mui/material/CircularProgress';
       }
     }
     
-    
-    
     render() {
         if (!this.state.loaded) { // if state is not loaded, show a loading circle
             return (
@@ -130,41 +131,93 @@ import CircularProgress from '@mui/material/CircularProgress';
               </div>
             );
           }
-          return (
-            <div className="flex flex-wrap justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono">
-              <h1 className="w-full text-center text-3xl py-4">Marketplace</h1>
-              <TradeRequest user={this.state.user} TradeRequest={this.state.TradeRequest} tokensDatas={this.state.tokensDatas} tokensBalance={this.state.tokensBalance} ></TradeRequest>
-              <div className="py-4">
-                <h2 className="text-2xl mb-2">Trading requests:</h2>
-                <div className="flex flex-col">
-                  {this.state.TradeRequest.map((tradeRequest, index) => (
-                    <div key={index} className="bg-[#1F1B38] rounded-md border-[#A459D1] border-2 p-4 mb-4">
-                      <p className="mb-2">
-                        <span className="font-semibold">Username:</span> {tradeRequest.user.username}
-                      </p>
-                      <p className="mb-2">
-                        <span className="font-semibold">Trading:</span> {tradeRequest.amountToTrade} {tradeRequest.tokenToTrade} for {tradeRequest.amountToReceive} {tradeRequest.tokenToReceive}
-                      </p>
-                      <p>
-                        Status:  {tradeRequest.status}
-                      </p>
-                      { this.state.user[0] !== tradeRequest.user.username && tradeRequest.status==="pending" ?
-                      <button
-                        onClick={() => this.handleTrade(tradeRequest)}
-                        className="hover:text-[#A459D1] text-cyan-300 py-2 px-4 border-2 border-cyan-300 rounded-xl">
-                           Trade
-                      </button>
-                      : ""
-                      }
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <Nav />
-              </div>
-            </div>
-          );
+      // Filter the trade requests based on the selectedSortOption
+      const filteredTradeRequests = this.state.selectedSortOption === "pending"
+      ? this.state.TradeRequest.filter((tradeRequest) => tradeRequest.status === "pending") // Show only pending requests
+      : this.state.selectedSortOption === "closed"
+      ? this.state.TradeRequest.filter((tradeRequest) => tradeRequest.status === "closed") // Show only closed requests
+      : this.state.TradeRequest; // Show all requests
+
+      return (
+        <div className="flex flex-wrap justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono">
+          <h1 className="w-full text-center text-3xl py-4">Marketplace</h1>
+          <button className='w-full' onClick={() => this.setState({ showAddRequest: !this.state.showAddRequest })}>
+            {this.state.showAddRequest ? 'Hide Trade Request' : 'Add Trade Request'}
+            <FontAwesomeIcon
+              className='border-2 p-2 rounded-xl border-cyan-300'
+              icon={this.state.showAddRequest ? faMinus : faPlus}
+              style={{ color: "#00fbff" }}
+            />
+          </button>
+          {this.state.showAddRequest && (
+            <TradeRequest
+              user={this.state.user}
+              TradeRequest={filteredTradeRequests} // Use the filtered trade requests
+              tokensDatas={this.state.tokensDatas}
+              tokensBalance={this.state.tokensBalance}
+            />
+          )}
+
           
+          <div className="py-4">
+            <div className="flex items-center mb-4">
+            <button
+                onClick={() => this.setState({ selectedSortOption: "all" })}
+                className={`hover:text-[#A459D1]  text-cyan-300 py-2 px-4 border-2 border-cyan-300 rounded-xl ${
+                  this.state.selectedSortOption === "all" ? "bg-cyan-300 font-black text-[#A459D1]" : ""
+                }`}
+              >
+                All Requests
+              </button>
+              <button
+                onClick={() => this.setState({ selectedSortOption: "pending" })}
+                className={`hover:text-[#A459D1]  text-cyan-300 py-2 px-4 border-2 border-cyan-300 rounded-xl mr-2 ${
+                  this.state.selectedSortOption === "pending" ? "bg-cyan-300 font-black text-[#A459D1]" : ""
+                }`}
+              >
+                Pending Requests
+              </button>
+              <button
+                onClick={() => this.setState({ selectedSortOption: "closed" })}
+                className={`hover:text-[#A459D1]  text-cyan-300 py-2 px-4 border-2 border-cyan-300 rounded-xl mr-2 ${
+                  this.state.selectedSortOption === "closed" ? "bg-cyan-300 font-black text-[#A459D1]" : ""
+                }`}
+              >
+                Closed Requests
+              </button>
+            </div>
+            <h2 className="text-2xl mb-2">Trading requests:</h2>
+            <div className="flex flex-col">
+              {filteredTradeRequests.map((tradeRequest, index) => (
+                <div key={index} className="bg-[#1F1B38] rounded-md border-[#A459D1] border-2 p-4 mb-4">
+                  <p className="mb-2">
+                    <span className="font-semibold">Username:</span> {tradeRequest.user.username}
+                  </p>
+                  <p className="mb-2">
+                    <span className="font-semibold">Trading:</span> {tradeRequest.amountToTrade} {tradeRequest.tokenToTrade} for {tradeRequest.amountToReceive} {tradeRequest.tokenToReceive}
+                  </p>
+                  <p>At: {new Date(tradeRequest.date).toLocaleString()}</p>
+                  <p>
+                    Status: {tradeRequest.status}
+                  </p>
+                  {this.state.user[0] !== tradeRequest.user.username && tradeRequest.status === "pending" ? (
+                    <button
+                      onClick={() => this.handleTrade(tradeRequest)}
+                      className="hover:text-[#A459D1] text-cyan-300 py-2 px-4 border-2 border-cyan-300 rounded-xl"
+                    >
+                      Trade
+                    </button>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <Nav />
+          </div>
+        </div>
+      );
     }
 }

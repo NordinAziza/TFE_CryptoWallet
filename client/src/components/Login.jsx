@@ -37,9 +37,7 @@ export default class Login extends Component{
        if(this.state.userAddress)
        {
          window.userWalletAddress=this.state.userAddress;
-         
-         //go to wallet
-        this.props.changeState(this.state.userAddress,user.password);
+         this.props.changeState(this.state.userAddress,user.password);
        }
       };
       
