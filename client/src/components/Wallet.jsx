@@ -218,41 +218,41 @@ export default class Wallet extends Component{
                 Logout
               </button>
             </div>
-            <div className='flex items-center ml-32 justify-center'>
-            <div>
-              <Nav ></Nav>
-            </div>
-            <div className='items-center'>
-              <h1 className='text-center text-4xl'>Wallet:</h1>
-              <h2>Username: {this.state.userName}</h2>
-              <h2>Blockchain Address : {this.state.userAddress}</h2>
-              <h2>
-                Balance :
-                <br />
-                <select className='bg-[#03001C] border-cyan-300 border-2 rounded-lg m-2' defaultValue={'none'} onChange={(e) => this.sortTokens(e.target.value)}>
-                  <option value="none">Sort</option>
-                  <option value="ascending">Ascending</option>
-                  <option value="descending">Descending</option>
-                </select>
-    
-                {this.state.tokensBalance.balance.map((balance, index) => (
-                  <span key={index}>
-                    {balance}
-                    <Link to={this.state.loaded ? { pathname: "/token/"+this.state.tokensBalance.symbol[index].toLowerCase()+"usdt" } : ""}>
-                      <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'>{this.state.loaded ? this.state.tokensBalance.symbol[index] : "loading..."}</span>
-                    </Link>
-                  </span>
-                ))}
+            <div className='flex m-5 p-5 ml-32 '>
+              <div>
+                <Nav ></Nav>
+              </div>
+              <div className=''>
+                <h1 className='text-center text-4xl mb-20'>Wallet:</h1>
+                <h2 className='relative right-80'>Username: {this.state.userName}</h2>
+                <h2 className='relative right-80'>Blockchain Address : {this.state.userAddress}</h2>
+                <h2 className='mt-16 text-xl'>Total Balance in USD :
+                  {this.state.loaded ? this.state.totalBalance.toFixed(2) : 'loading...'}$
+                </h2>
+                
+                <div>
+                  Balance :
+                  <br />
+                  <select className='bg-[#03001C] border-cyan-300 border-2 rounded-lg m-2' defaultValue={'none'} onChange={(e) => this.sortTokens(e.target.value)}>
+                    <option value="none">Sort</option>
+                    <option value="ascending">Ascending</option>
+                    <option value="descending">Descending</option>
+                  </select>
+      
+                  {this.state.tokensBalance.balance.map((balance, index) => (
+                    <span key={index}>
+                      {balance}
+                      <Link to={this.state.loaded ? { pathname: "/token/"+this.state.tokensBalance.symbol[index].toLowerCase()+"usdt" } : ""}>
+                        <span className='hover:text-[#A459D1]  hover:border-[#A459D1] mr-2'>{this.state.loaded ? this.state.tokensBalance.symbol[index] : "loading..."}</span>
+                      </Link>
+                    </span>
+                  ))}
 
-              <Bar tokensBalance={this.state.tokensBalance} tokensDatas={this.state.tokensDatas} total={this.state.totalBalance} ></Bar>
+                <Bar tokensBalance={this.state.tokensBalance} tokensDatas={this.state.tokensDatas} total={this.state.totalBalance} ></Bar>
 
-              </h2>
-              <h2>Total Balance in USD :
-                {this.state.loaded ? this.state.totalBalance.toFixed(2) : 'loading...'}$
-              </h2>
+              </div> 
             </div>
           </div>
-
         </div>
         )
     }
