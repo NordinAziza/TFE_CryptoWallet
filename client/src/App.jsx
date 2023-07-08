@@ -4,6 +4,7 @@ import Register from './components/Register';
 import Wallet from "./components/Wallet";
 import Login from './components/Login';
 import Graph from "./components/Graph";
+import Buy from "./components/Buy";
 import Tokens from "./components/Tokens";
 import Token from "./components/Token";
 import Marketplace from './components/Marketplace'
@@ -44,7 +45,9 @@ function App() {
         path="/token/:symbol"
         element={<Token token={tokenData} />}
       />
+      <Route path="/buy" element={<Buy/>} />
     </Routes>
+    
   );
 }
 

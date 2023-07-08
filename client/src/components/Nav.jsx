@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faChartSimple, faStore, faBitcoinSign, faAngleDown, faAngleUp, faSearch, faWallet } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faChartSimple, faStore, faBitcoinSign, faAngleDown, faAngleUp, faSearch, faWallet, faCreditCard } from '@fortawesome/free-solid-svg-icons';
 
 export default class Nav extends React.Component {
   constructor(props) {
@@ -135,6 +135,12 @@ export default class Nav extends React.Component {
                 <Link to="/marketplace" className="flex items-center p-2 text-cyan-300 rounded-lg">
                   <FontAwesomeIcon icon={faStore} style={{ color: '#00fbff' }} />
                   <span className="ml-3">Marketplace</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/buy" className="flex items-center p-2 text-cyan-300 rounded-lg">
+                  <FontAwesomeIcon icon={faCreditCard} style={{ color: '#00fbff' }} />
+                  <span className="ml-3">Buy crypto</span>
                 </Link>
               </li>
             </ul>

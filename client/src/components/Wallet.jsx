@@ -24,7 +24,7 @@ export default class Wallet extends Component{
           loaded: false // loading state
         };
       }
-//loading the data before we render the page    
+//loading the data before rendering the page    
     async componentWillMount() {
         await this.loadWeb3();
         const storedUserData = localStorage.getItem('userData');
@@ -41,6 +41,7 @@ export default class Wallet extends Component{
         await this.GetTokens();
         await this.getTokensBalance();
         await this.getTokensData();
+        localStorage.setItem("tokens",JSON.stringify(this.state.tokens));
         localStorage.setItem("tokensDatas",JSON.stringify(this.state.tokensDatas));
         localStorage.setItem("tokensBalance",JSON.stringify(this.state.tokensBalance));
         this.setState({ loaded: true, totalBalance:this.getTotalBalance() })
