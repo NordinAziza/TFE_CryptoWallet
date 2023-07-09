@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Register from './components/Register';
 import Wallet from "./components/Wallet";
 import Login from './components/Login';
@@ -14,16 +14,29 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 function App() {
   const [login, setLogin] = useState(false);
   const [userAdr, setUserAdr] = useState("");
-  const [userPdw, setUserPdw] = useState("");
+
+  useEffect(() => {
+    // Check if the login information exists in local storage
+    const storedLogin = localStorage.getItem('login');
+    const storedUserAdr = localStorage.getItem('userAdr');
+    
+    if (storedLogin && storedUserAdr) {
+      setLogin(storedLogin === 'true');
+      setUserAdr(storedUserAdr);
+    }
+  }, []);
 
   function changeState(userAddress, password) {
     setLogin(prevLogin => !prevLogin); // Toggle the value of login
     setUserAdr(userAddress);
-    setUserPdw(password);
+
+    // Store the login information in local storage
+    localStorage.setItem('login', !login);
+    localStorage.setItem('userAdr', userAddress);
   }
+
   const location = useLocation();
   const { tokenData } = location.state || {};
-
 
   return (
     <Routes>
@@ -47,8 +60,8 @@ function App() {
       />
       <Route path="/buy" element={<Buy/>} />
     </Routes>
-    
   );
 }
 
 export default App;
+

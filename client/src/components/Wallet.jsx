@@ -25,28 +25,28 @@ export default class Wallet extends Component{
         };
       }
 //loading the data before rendering the page    
-    async componentWillMount() {
-        await this.loadWeb3();
-        const storedUserData = localStorage.getItem('userData');
-        if (storedUserData) {
-          const user = JSON.parse(storedUserData);
-          this.setState({
-            userName: user[0],
-            userEmail: user[1],
-            userPassword: user[2]
-          });
-        }
-        const balanceEth = await this.getUserData();
-        this.setState({ balanceEth });
-        await this.GetTokens();
-        await this.getTokensBalance();
-        await this.getTokensData();
-        localStorage.setItem("tokens",JSON.stringify(this.state.tokens));
-        localStorage.setItem("tokensDatas",JSON.stringify(this.state.tokensDatas));
-        localStorage.setItem("tokensBalance",JSON.stringify(this.state.tokensBalance));
-        this.setState({ loaded: true, totalBalance:this.getTotalBalance() })
-      }
-
+async componentWillMount() 
+{
+    await this.loadWeb3();
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      const user = JSON.parse(storedUserData);
+      this.setState({
+        userName: user[0],
+        userEmail: user[1],
+        userPassword: user[2]
+      });
+    }
+    const balanceEth = await this.getUserData();
+    this.setState({ balanceEth });
+    await this.GetTokens();
+    await this.getTokensBalance();
+    await this.getTokensData();
+    localStorage.setItem("tokens", JSON.stringify(this.state.tokens));
+    localStorage.setItem("tokensDatas", JSON.stringify(this.state.tokensDatas));
+    localStorage.setItem("tokensBalance", JSON.stringify(this.state.tokensBalance));
+    this.setState({ loaded: true, totalBalance: this.getTotalBalance() });
+  }
 //fetching the user's data
     async loadWeb3(){  //loading blockchain
         window.web3=new Web3('HTTP://127.0.0.1:7545');
@@ -197,9 +197,9 @@ export default class Wallet extends Component{
           totalBalance: 0,
           loaded: false
         });
+        localStorage.removeItem('userData'); // Remove stored user data
         this.props.changeState("", "");
       };
-      
     
     render(){
       if (!this.state.loaded) { // if state is not loaded, show a loading circle
