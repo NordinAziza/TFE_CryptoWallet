@@ -9,7 +9,7 @@ import Tokens from "./components/Tokens";
 import Token from "./components/Token";
 import Marketplace from './components/Marketplace'
 import GraphWrapper from './components/GraphWrapper';
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation,Navigate } from 'react-router-dom'
 
 function App() {
   const [login, setLogin] = useState(false);
@@ -34,7 +34,11 @@ function App() {
     localStorage.setItem('login', !login);
     localStorage.setItem('userAdr', userAddress);
   }
-
+  function handleLogout() {
+    setLogin(false);
+    setUserAdr("");
+    localStorage.clear();
+  }
   const location = useLocation();
   const { tokenData } = location.state || {};
 
@@ -44,21 +48,47 @@ function App() {
         path="/"
         element={
           login ? (
-            <Wallet userAdr={userAdr} changeState={changeState} />
+            <Wallet userAdr={userAdr} changeState={changeState} handleLogout={handleLogout} />
           ) : (
             <Login login={login} changeState={changeState} />
           )
         }
       />
-      <Route path="/register" element={<Register />} />
-      <Route path="/marketplace" element={<Marketplace/>} />
-      <Route path="/graph/:coin" element={<GraphWrapper />} />
-      <Route path="/tokens" element={<Tokens />} />
+      <Route
+        path="/marketplace"
+        element={
+          login ? <Marketplace handleLogout={handleLogout} /> : <Navigate to="/" replace />
+        }
+      />
+      <Route
+        path="/graph/:coin"
+        element={
+          login ? <GraphWrapper handleLogout={handleLogout} /> : <Navigate to="/" replace />
+        }
+      />
+      <Route
+        path="/tokens"
+        element={
+          login ? <Tokens handleLogout={handleLogout} /> : <Navigate to="/" replace />
+        }
+      />
       <Route
         path="/token/:symbol"
-        element={<Token token={tokenData} />}
+        element={
+          login ? (
+            <Token token={tokenData} handleLogout={handleLogout} />
+          ) : (
+            <Navigate to="/" replace />
+          )
+        }
       />
-      <Route path="/buy" element={<Buy/>} />
+      <Route
+        path="/buy"
+        element={
+          login ? <Buy handleLogout={handleLogout} /> : <Navigate to="/" replace />
+        }
+      />
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 }

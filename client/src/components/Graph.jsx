@@ -54,7 +54,7 @@ export default class Graph extends React.Component {
   render() {
     return (
       <div className='flex flex-wrap items-center justify-around bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
-        <Nav></Nav>
+        <Nav handleLogout={this.props.handleLogout} ></Nav>
         <div className='w-4/5 flex-row '>
           <h1 className='w-full text-center text-3xl font-semibold'>Graph {this.state.URLcoin}</h1>
           <Chart

@@ -215,7 +215,7 @@ import { faPlus,faMinus } from '@fortawesome/free-solid-svg-icons';
             </div>
           </div>
           <div>
-            <Nav />
+            <Nav handleLogout={this.props.handleLogout} ></Nav>
           </div>
         </div>
       );

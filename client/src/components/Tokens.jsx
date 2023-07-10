@@ -45,7 +45,7 @@ export default class Tokens extends React.Component {
             ))}
           </ul>
           <div className="absolute top-0 right-0">
-            <Nav />
+            <Nav handleLogout={this.props.handleLogout} ></Nav>
           </div>
         </div>
       );

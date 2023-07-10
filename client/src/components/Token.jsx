@@ -55,7 +55,7 @@ export default class Token extends React.Component {
     }
     return (
       <div className='flex flex-wrap justify-center items-center text-center  bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
-        <Nav></Nav>
+         <Nav handleLogout={this.props.handleLogout} ></Nav>
         <div className="w-1/3 h-[500px] text-xl flex flex-wrap bg-[#1F1B38] border-[#A459D1] border-2 p-4 rounded-lg shadow-md">
           <h2 className="w-full text-3xl font-bold mb-2"> <FontAwesomeIcon icon={faBitcoinSign} style={{ color: '#00fbff' }} /> Token: {tokenData.symbol}</h2>
 

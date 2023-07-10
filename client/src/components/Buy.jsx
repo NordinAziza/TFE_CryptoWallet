@@ -101,7 +101,7 @@ export default class Buy extends Component {
         </button>
         {purchaseCompleted && <p className="text-green-500 mt-4">Purchase successful!</p>}
         {purchaseCompleted === false && <p className="text-red-500 mt-4">Purchase not completed.</p>}
-        <Nav />
+        <Nav handleLogout={this.props.handleLogout} ></Nav>
       </form>
     );
   }

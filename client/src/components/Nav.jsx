@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faChartSimple, faStore, faBitcoinSign, faAngleDown, faAngleUp, faSearch, faWallet, faCreditCard } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faChartSimple, faStore, faBitcoinSign, faAngleDown, faAngleUp, faSearch, faWallet, faCreditCard,faSignOutAlt  } from '@fortawesome/free-solid-svg-icons';
 
 export default class Nav extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ export default class Nav extends React.Component {
       search: '',
     };
   }
-
+  
   componentDidMount() {
     this.loadLocalStorage();
   }
@@ -142,6 +142,15 @@ export default class Nav extends React.Component {
                   <FontAwesomeIcon icon={faCreditCard} style={{ color: '#00fbff' }} />
                   <span className="ml-3">Buy crypto</span>
                 </Link>
+              </li>
+              <li>
+                <div
+                  className="flex items-center p-2 text-cyan-300 rounded-lg cursor-pointer"
+                  onClick={this.props.handleLogout} // Added onClick event handler
+                >
+                  <FontAwesomeIcon icon={faSignOutAlt} style={{ color: '#00ddfa' }} />
+                  <span className="ml-3">Logout</span>
+                </div>
               </li>
             </ul>
           </div>

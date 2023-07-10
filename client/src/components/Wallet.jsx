@@ -182,25 +182,6 @@ async componentWillMount()
         return total;
       }
 
-      //logout
-      handleLogout = () => {
-        this.setState({
-          balanceEth: 0,
-          userAddress: '',
-          userPassword: '',
-          userEmail: '',
-          userName: '',
-          coinData: {},
-          tokens: [],
-          tokensDatas: [],
-          tokensBalance: { symbol: [], balance: [] },
-          totalBalance: 0,
-          loaded: false
-        });
-        localStorage.removeItem('userData'); // Remove stored user data
-        this.props.changeState("", "");
-      };
-    
     render(){
       if (!this.state.loaded) { // if state is not loaded, show a loading circle
         return (
@@ -214,14 +195,9 @@ async componentWillMount()
         return(
          
         <div className='flex flex-wrap justify-center bg-[#03001C] text-cyan-300 min-h-screen font-mono'>
-           <div className="flex w-full justify-end fixed text-right">
-              <button onClick={this.handleLogout} className="hover:text-[#A459D1] text-cyan-300 m-4 p-2 border-2 border-cyan-300 rounded-xl">
-                Logout
-              </button>
-            </div>
             <div className='flex m-5 p-5 ml-32 '>
               <div>
-                <Nav ></Nav>
+                <Nav handleLogout={this.props.handleLogout} ></Nav>
               </div>
               <div className=''>
                 <h1 className='text-center text-4xl mb-20'>Wallet:</h1>
